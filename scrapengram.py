@@ -20,15 +20,15 @@ with open(fil,'r') as r: #read file
     p=1
     mylist = list(nltk.bigrams(line.split(' '))) #check by bigram,can be modified here.
     for j in mylist:
-      time.sleep(3)#not to send too many requests at a time
+      time.sleep(3)#not to send too many requests at a time, increase as much as possible to avoid error 429
       GoToURL=getURL(j,2015,2019,26,3,True)
       with urllib.request.urlopen(GoToURL) as url:
-        data = json.loads(url.read().decode())
+        data = json.loads(url.read().decode()) #you can also keep a check with status code or HTTPErrors if need arises
       if len(data) == 0: #bigram doesn't exist
         p*=1e-6 #can be changed as you wish for
         continue
       for i in data:
-        if i['type']=='CASE_INSENSITIVE': #we considered all variations
+        if i['type']=='CASE_INSENSITIVE' or i['type']=='NGRAM': #we considered all variations as well as those with no variation
           if sum(i['timeseries'])==0:
             p*=1e-6
           else:
